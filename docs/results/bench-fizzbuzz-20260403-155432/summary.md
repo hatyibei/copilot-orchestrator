@@ -8,21 +8,23 @@
 
 | CLI     | Time     | Output (chars) | Output (lines) | Behavior |
 |---------|----------|----------------|----------------|----------|
-| Claude  | 35,215ms | 65             | 1              | Created fizzbuzz.py + test_fizzbuzz.py, ran tests, returned summary |
+| Claude  | 35,215ms | 65             | 1              | Created files + ran tests, returned summary only |
 | Codex   | 42,277ms | 1,282          | 59             | Returned code inline in markdown code blocks |
-| Copilot | 29,760ms | 4,632          | 123            | Read existing files, tried to run tests (permission denied) |
+| Copilot | 35,784ms | 4,889          | 169            | Created files + ran tests + fixed test failure + returned full code |
 
 ## Observations
 
-- **Claude Code** (Sonnet 4): Actually created files and ran pytest. Output was just a one-line summary ("All 14 tests pass"). This is the most "agentic" behavior -- it treated the task as a real development task, not a text generation task.
+- **Claude Code** (Sonnet 4): Created fizzbuzz.py + test_fizzbuzz.py, ran pytest, returned one-line summary ("All 14 tests pass"). Most terse output -- trusts that file creation IS the deliverable.
 
-- **Codex CLI** (gpt-5.4): Returned clean, well-structured code inline. Did not create files or run tests. The output is self-contained and easy to copy-paste.
+- **Codex CLI** (gpt-5.4): Returned clean, well-structured code inline. Did not create files or run tests. Output is self-contained and easy to copy-paste. The "code generation" philosophy.
 
-- **Copilot CLI** (Sonnet 4.5): Tried to be agentic (read files, attempted test execution) but hit permission issues due to `--no-ask-user` blocking interactive tool approval. Output included ANSI escape codes from its timeline rendering.
+- **Copilot CLI** (Sonnet 4.5): Created files, ran pytest, found a test failure, fixed it, re-ran tests until green, then returned the full code in the output. Most thorough agentic loop -- includes input validation (`ValueError` for n < 1) and 12 test cases including error paths.
+
+Note: Copilot must be run with `--allow-all-tools --no-ask-user` for full agentic behavior. Without `--allow-all-tools`, shell tool calls are denied.
 
 ## Key Takeaway
 
-The three CLIs have fundamentally different philosophies:
-- Claude Code: **Act first** (create files, run tests)
-- Codex CLI: **Output code** (clean inline response)
-- Copilot CLI: **Agentic but cautious** (reads context, asks permission)
+All three CLIs are fully agentic when given proper permissions, but differ in output philosophy:
+- Claude Code: **Act and summarize** (files are the output, text is minimal)
+- Codex CLI: **Output code inline** (no file creation, clean text response)
+- Copilot CLI: **Act and show work** (files + test loop + full code in output)
