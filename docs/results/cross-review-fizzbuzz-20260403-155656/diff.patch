@@ -1,0 +1,91 @@
+diff --git a/fizzbuzz.py b/fizzbuzz.py
+new file mode 100644
+index 0000000..b98a31a
+--- /dev/null
++++ b/fizzbuzz.py
+@@ -0,0 +1,37 @@
++def fizzbuzz(n: int) -> str:
++    """Return FizzBuzz result for a given number.
++
++    Args:
++        n: A positive integer.
++
++    Returns:
++        'FizzBuzz' if divisible by both 3 and 5,
++        'Fizz' if divisible by 3,
++        'Buzz' if divisible by 5,
++        the number as a string otherwise.
++    """
++    if n % 15 == 0:
++        return "FizzBuzz"
++    if n % 3 == 0:
++        return "Fizz"
++    if n % 5 == 0:
++        return "Buzz"
++    return str(n)
++
++
++def play_fizzbuzz(start: int = 1, end: int = 100) -> list[str]:
++    """Play FizzBuzz from start to end inclusive.
++
++    Args:
++        start: First number in the range.
++        end: Last number in the range.
++
++    Returns:
++        List of FizzBuzz results.
++    """
++    return [fizzbuzz(i) for i in range(start, end + 1)]
++
++
++if __name__ == "__main__":
++    for result in play_fizzbuzz():
++        print(result)
+diff --git a/test_fizzbuzz.py b/test_fizzbuzz.py
+new file mode 100644
+index 0000000..c000b75
+--- /dev/null
++++ b/test_fizzbuzz.py
+@@ -0,0 +1,42 @@
++import pytest
++
++from fizzbuzz import fizzbuzz, play_fizzbuzz
++
++
++class TestFizzbuzz:
++    @pytest.mark.parametrize(
++        ("n", "expected"),
++        [
++            (1, "1"),
++            (2, "2"),
++            (3, "Fizz"),
++            (5, "Buzz"),
++            (6, "Fizz"),
++            (10, "Buzz"),
++            (15, "FizzBuzz"),
++            (30, "FizzBuzz"),
++            (97, "97"),
++        ],
++    )
++    def test_fizzbuzz(self, n: int, expected: str) -> None:
++        assert fizzbuzz(n) == expected
++
++
++class TestPlayFizzbuzz:
++    def test_length(self) -> None:
++        result = play_fizzbuzz(1, 100)
++        assert len(result) == 100
++
++    def test_first_element(self) -> None:
++        assert play_fizzbuzz()[0] == "1"
++
++    def test_last_element(self) -> None:
++        assert play_fizzbuzz()[-1] == "Buzz"
++
++    def test_contains_fizzbuzz_at_15(self) -> None:
++        result = play_fizzbuzz()
++        assert result[14] == "FizzBuzz"
++
++    def test_custom_range(self) -> None:
++        result = play_fizzbuzz(14, 16)
++        assert result == ["14", "FizzBuzz", "16"]

@@ -1,0 +1,1 @@
+Write a Python function that plays FizzBuzz from 1 to 100. Include type hints, docstring, and unit tests using pytest. Output only the code, no explanation.
